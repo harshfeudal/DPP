@@ -96,7 +96,10 @@
 		"CORO",
 		"cback",
 		"mentionables",
+		"stringified",
+		"disdppgloss",
 		"awaiter",
+		"resumer",
 		"checkered",
 		"ramen",
 		"dango",
@@ -129,7 +132,8 @@
 		"loadu",
 		"cvtps",
 		"neww",
-		"STDCORO"
+		"STDCORO",
+		"NOMINMAX"
 	],
 	"flagWords": [
 		"hte"

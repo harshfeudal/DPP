@@ -28,6 +28,7 @@
 #include <unordered_map>
 #include <map>
 #include <functional>
+#include <cstddef>
 
 #ifndef MAX_CND_IMAGE_SIZE
 	#define MAX_CDN_IMAGE_SIZE 4096
@@ -113,9 +114,26 @@ namespace dpp {
 		};
 
 		/**
+		 * @brief Guild navigation types for dpp::utility::guild_navigation()
+		 */
+		enum guild_navigation_type {
+			/// _Customize_ tab with the server's dpp::onboarding_prompt
+			gnt_customize,
+			/// _Browse Channels_ tab
+			gnt_browse,
+			/// Server Guide
+			gnt_guide,
+		};
+
+		/**
 		 * @brief The base URL for CDN content such as profile pictures and guild icons.
 		 */
 		inline const std::string cdn_host = "https://cdn.discordapp.com"; 
+
+		/**
+		 * @brief The base URL for message/user/channel links.
+		 */
+		inline const std::string url_host = "https://discord.com"; 
 
 		/**
 		 * @brief Callback for the results of a command executed via dpp::utility::exec
@@ -146,6 +164,15 @@ namespace dpp {
 		 * @return std::string The formatted timestamp
 		 */
 		std::string DPP_EXPORT timestamp(time_t ts, time_format tf = tf_short_datetime);
+
+		/**
+		 * @brief Create a mentionable guild navigation (used in a message).
+		 *
+		 * @param guild_id The guild ID
+		 * @param gnt Guild navigation type using dpp::utility::guild_navigation_type
+		 * @return std::string The formatted timestamp
+		 */
+		std::string DPP_EXPORT guild_navigation(const snowflake guild_id, guild_navigation_type gnt);
 
 		/**
 		 * @brief Returns current date and time
@@ -479,7 +506,7 @@ namespace dpp {
 		 */
 		std::string DPP_EXPORT slashcommand_mention(snowflake command_id, const std::string &command_name, const std::string &subcommand_group, const std::string &subcommand);
 
-        	/**
+		/**
 		 * @brief Create a mentionable user.
 		 * @param id The ID of the user.
 		 * @return std::string The formatted mention of the user.
@@ -500,7 +527,7 @@ namespace dpp {
 		* @param is_animated is emoji animated.
 		* @return std::string The formatted mention of the emoji.
 		*/
-		std::string DPP_EXPORT emoji_mention(const std::string& name, const snowflake& id, bool is_animated = false);
+		std::string DPP_EXPORT emoji_mention(std::string_view name, snowflake id, bool is_animated = false);
 
 		/**
 		* @brief Create a mentionable role.
@@ -508,6 +535,102 @@ namespace dpp {
 		* @return std::string The formatted mention of the role.
 		*/
 		std::string DPP_EXPORT role_mention(const snowflake& id);
+
+		/**
+		* @brief Create a URL for message.
+		* @param guild_id The ID of the guild where message is written.
+		* @param channel_id The ID of the channel where message is written.
+		* @param message_id The ID of the message.
+		* @return std::string The URL to message or empty string if any of ids is 0.
+		*/
+		std::string DPP_EXPORT message_url(const snowflake& guild_id, const snowflake& channel_id, const snowflake& message_id);
+
+		/**
+		* @brief Create a URL for message.
+		* @param guild_id The ID of the guild where channel is located.
+		* @param channel_id The ID of the channel.
+		* @return std::string The URL to message or empty string if any of ids is 0.
+		*/
+		std::string DPP_EXPORT channel_url(const snowflake& guild_id, const snowflake& channel_id);
+
+		/**
+		* @brief Create a URL for message.
+		* @param guild_id The ID of the guild where thread is located.
+		* @param thread_id The ID of the thread.
+		* @return std::string The URL to message or empty string if any of ids is 0.
+		*/
+		std::string DPP_EXPORT thread_url(const snowflake& guild_id, const snowflake& thread_id);
+		
+		/**
+		* @brief Create a URL for message.
+		* @param user_id The ID of the guild where thread is located.
+		* @return std::string The URL to message or empty string if id is 0.
+		*/
+		std::string DPP_EXPORT user_url(const snowflake& user_id);
+
+
+
+#ifdef _DOXYGEN_
+		/**
+		 * @brief Get the mime type for an image type.
+		 * @param type Image type
+		 * @return std::string The mime type for this image type
+		 */
+		std::string DPP_EXPORT mime_type(image_type type);
+
+		/**
+		 * @brief Get the mime type for a sticker format.
+		 * @param format Sticker format
+		 * @return std::string The mime type for this sticker format
+		 */
+		std::string DPP_EXPORT mime_type(sticker_format format);
+
+		/**
+		 * @brief Get the file extension for an image type.
+		 * @param type Image type
+		 * @return std::string The file extension (e.g. ".png") for this image type
+		 */
+		std::string DPP_EXPORT file_extension(image_type type);
+
+		/**
+		 * @brief Get the file extension for a sticker format.
+		 * @param format Sticker format
+		 * @return std::string The file extension (e.g. ".png") for this sticker format
+		 */
+		std::string DPP_EXPORT file_extension(sticker_format format);
+#else
+		/**
+		 * @brief Get the mime type for an image type.
+		 * @param type Image type
+		 * @return std::string The mime type for this image type
+		 */
+		template <typename T>
+		extern std::enable_if_t<std::is_same_v<T, image_type>, std::string> DPP_EXPORT mime_type(T type);
+
+		/**
+		 * @brief Get the mime type for a sticker format.
+		 * @param format Sticker format
+		 * @return std::string The mime type for this sticker format
+		 */
+		template <typename T>
+		extern std::enable_if_t<std::is_same_v<T, sticker_format>, std::string> DPP_EXPORT mime_type(T format);
+
+		/**
+		 * @brief Get the file extension for an image type.
+		 * @param type Image type
+		 * @return std::string The file extension (e.g. ".png") for this image type
+		 */
+		template <typename T>
+		extern std::enable_if_t<std::is_same_v<T, image_type>, std::string> DPP_EXPORT file_extension(T type);
+
+		/**
+		 * @brief Get the file extension for a sticker format.
+		 * @param format Sticker format
+		 * @return std::string The file extension (e.g. ".png") for this sticker format
+		 */
+		template <typename T>
+		extern std::enable_if_t<std::is_same_v<T, sticker_format>, std::string> DPP_EXPORT file_extension(T format);
+#endif
 
 		/**
 		 * @brief Returns the library's version string
@@ -540,6 +663,53 @@ namespace dpp {
 		 * @param name New name to set
 		 */
 		void DPP_EXPORT set_thread_name(const std::string& name);
+
+#ifdef __cpp_concepts // if c++20
+		/**
+		 * @brief Concept satisfied if a callable F can be called using the arguments Args, and that its return value is convertible to R.
+		 *
+		 * @tparam F Callable object
+		 * @tparam R Return type to check for convertibility to
+		 * @tparam Args... Arguments to use to resolve the overload
+		 * @return Whether the expression `F(Args...)` is convertible to R
+		 */
+		template <typename F, typename R, typename... Args>
+		concept callable_returns = std::convertible_to<std::invoke_result_t<F, Args...>, R>;
+
+		/**
+		 * @brief Type trait to check if a callable F can be called using the arguments Args, and that its return value is convertible to R.
+		 *
+		 * @deprecated In C++20 mode, prefer using the concept `callable_returns`.
+		 * @tparam F Callable object
+		 * @tparam R Return type to check for convertibility to
+		 * @tparam Args... Arguments to use to resolve the overload
+		 * @return Whether the expression `F(Args...)` is convertible to R
+		 */
+		template <typename F, typename R, typename... Args>
+		inline constexpr bool callable_returns_v = callable_returns<F, R, Args...>;
+#else
+		/**
+		 * @brief Type trait to check if a callable F can be called using the arguments Args, and that its return value is convertible to R.
+		 *
+		 * @tparam F Callable object
+		 * @tparam R Return type to check for convertibility to
+		 * @tparam Args... Arguments to use to resolve the overload
+		 * @return Whether the expression `F(Args...)` is convertible to R
+		 */
+		template <typename F, typename R, typename... Args>
+		inline constexpr bool callable_returns_v = std::is_convertible_v<std::invoke_result_t<F, Args...>, R>;
+#endif
+
+		/**
+		 * @brief Utility struct that has the same size and alignment as another but does nothing. Useful for ABI compatibility.
+		 *
+		 * @tparam T Type to mimic
+		 */
+		template <typename T>
+		struct alignas(T) dummy {
+			/** @brief Array of bytes with a size mimicking T */
+			std::array<std::byte, sizeof(T)> data;
+		};
 
 	} // namespace utility
 } // namespace dpp

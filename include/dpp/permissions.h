@@ -75,6 +75,7 @@ enum permissions : uint64_t {
 	p_use_soundboard = 0x40000000000, //!< allows for using soundboard in a voice channel
 	p_use_external_sounds = 0x0000200000000000, //!< allows the usage of custom soundboard sounds from other servers
 	p_send_voice_messages = 0x0000400000000000, //!< allows sending voice messages
+	p_use_clyde_ai = 0x0000800000000000, //!< allows use of Clyde AI
 };
 
 /**
@@ -128,6 +129,44 @@ public:
 	operator nlohmann::json() const;
 
 	/**
+	 * @brief Check for certain permissions, taking into account administrator privileges. It uses the Bitwise AND operator
+	 * @tparam T one or more uint64_t permission bits
+	 * @param values The permissions (from dpp::permissions) to check for
+	 *
+	 * **Example:**
+	 *
+	 * ```cpp
+	 * bool is_mod = permission.can(dpp::p_kick_members, dpp::p_ban_members);
+	 * // Returns true if it has permission to p_kick_members and p_ban_members
+	 * ```
+	 *
+	 * @return bool True if it has **all** the given permissions or dpp::p_administrator
+	 */
+	template <typename... T>
+	constexpr bool can(T... values) const noexcept {
+		return has(values...) || (value & p_administrator);
+	}
+
+	/**
+	 * @brief Check for certain permissions, taking into account administrator privileges. It uses the Bitwise AND operator
+	 * @tparam T one or more uint64_t permission bits
+	 * @param values The permissions (from dpp::permissions) to check for
+	 *
+	 * **Example:**
+	 *
+	 * ```cpp
+	 * bool is_mod = permission.can_any(dpp::p_kick_members, dpp::p_ban_members);
+	 * // Returns true if it has permission to p_kick_members or p_ban_members
+	 * ```
+	 *
+	 * @return bool True if it has **any** of the given permissions or dpp::p_administrator
+	 */
+	template <typename... T>
+	constexpr bool can_any(T... values) const noexcept {
+		return has_any(values...) || (value & p_administrator);
+	}
+
+	/**
 	 * @brief Check for permission flags set. It uses the Bitwise AND operator
 	 * @tparam T one or more uint64_t permission bits
 	 * @param values The permissions (from dpp::permissions) to check for
@@ -139,7 +178,7 @@ public:
 	 * // Returns true if the permission bitmask contains p_kick_members and p_ban_members
 	 * ```
 	 *
-	 * @return bool True if it has all the given permissions
+	 * @return bool True if it has **all** the given permissions
 	 */
 	template <typename... T>
 	constexpr bool has(T... values) const noexcept {
@@ -158,7 +197,7 @@ public:
 	 * // Returns true if the permission bitmask contains p_administrator or p_ban_members
 	 * ```
 	 *
-	 * @return bool True if it has any the given permissions
+	 * @return bool True if it has **any** of the given permissions
 	 */
 	template <typename... T>
 	constexpr bool has_any(T... values) const noexcept {
@@ -187,7 +226,7 @@ public:
 	}
 
 	/**
-	 * @brief Assign a permission. This will reset the bitmask to the new value.
+	 * @brief Assign permissions. This will reset the bitmask to the new value.
 	 * @tparam T one or more uint64_t permission bits
 	 * @param values The permissions (from dpp::permissions) to set
 	 *

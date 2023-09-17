@@ -20,11 +20,17 @@ if (HAVE_PTHREAD_SETNAME_NP)
 	}" HAVE_TWO_PARAMETER_SETNAME_NP)
 endif()
 
-if(NOT DEFINED AVX_TYPE)
-	include("${CMAKE_CURRENT_SOURCE_DIR}/../cmake/DetectArchitecture.cmake")
-endif()
-
 add_compile_definitions(DPP_OS=${CMAKE_SYSTEM_NAME})
+
+if(${AVX_TYPE} STREQUAL "OFF")
+	include("${CMAKE_CURRENT_SOURCE_DIR}/../cmake/DetectArchitecture.cmake")
+	add_compile_options("${AVX_FLAG}")
+	add_compile_definitions("${AVX_NAME}")
+	message("--- AVX type: ${AVX_NAME}")
+else()
+	message("-- AVX type overridden by configuration: ${AVX_TYPE}")
+	add_compile_definitions("${AVX_TYPE}")
+endif()
 
 if(WIN32 AND NOT MINGW)
 	if (NOT WINDOWS_32_BIT)
@@ -59,8 +65,6 @@ if(WIN32 AND NOT MINGW)
 		add_compile_definitions(WIN32_LEAN_AND_MEAN)
 		add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 		add_compile_definitions(_CRT_NONSTDC_NO_DEPRECATE)
-		add_compile_definitions("${AVX_TYPE}")
-		add_compile_options("${AVX_FLAG}")
 
 	endif()
 endif()
@@ -230,6 +234,15 @@ foreach (fullmodname ${subdirlist})
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include/dpp>
 	)
 
+	if (DPP_USE_PCH)
+		target_precompile_headers(${modname} PRIVATE
+			"${CMAKE_CURRENT_SOURCE_DIR}/../include/dpp/cluster.h"
+			"${CMAKE_CURRENT_SOURCE_DIR}/../include/dpp/json.h"
+			"${CMAKE_CURRENT_SOURCE_DIR}/../include/dpp/utility.h"
+			"${CMAKE_CURRENT_SOURCE_DIR}/../include/dpp/restresults.h"
+		)
+	endif()
+
 	if (WIN32 AND NOT MINGW)
 		if (NOT WINDOWS_32_BIT)
 			target_link_libraries(${modname} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../win32/lib/libssl.lib"
@@ -270,27 +283,6 @@ target_compile_features(dpp PRIVATE cxx_override)
 target_compile_features(dpp PRIVATE cxx_thread_local)
 target_compile_features(dpp PRIVATE cxx_variadic_templates)
 target_compile_features(dpp PRIVATE cxx_attribute_deprecated)
-
-if (DPP_BUILD_TEST)
-	enable_testing(${CMAKE_CURRENT_SOURCE_DIR}/..)
-	file(GLOB testnamelist "${CMAKE_CURRENT_SOURCE_DIR}/../src/*")
-	foreach (fulltestname ${testnamelist})
-		get_filename_component(testname ${fulltestname} NAME)
-		if (NOT "${testname}" STREQUAL "dpp")
-			message("-- Configuring test: ${Green}${testname}${ColourReset} with source: ${modules_dir}/${testname}/*.cpp")
-			set (testsrc "")
-			file(GLOB testsrc "${modules_dir}/${testname}/*.cpp")
-			add_executable(${testname} ${testsrc})
-			target_compile_features(${testname} PRIVATE cxx_std_17)
-			target_link_libraries(${testname} PUBLIC ${modname})
-		endif()
-	endforeach()
-	add_test(
-		NAME unittests
-		COMMAND library/unittest
-		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/library
-	)
-endif()
 
 if(HAVE_PRCTL)
 	target_compile_definitions(dpp PRIVATE HAVE_PRCTL)
@@ -350,6 +342,34 @@ if(DPP_CORO)
 	target_compile_definitions(dpp PUBLIC DPP_CORO)
 	execute_process(WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.."
 					COMMAND php buildtools/make_struct.php "\\Dpp\\Generator\\CoroGenerator")
+endif()
+
+if (DPP_BUILD_TEST)
+	enable_testing(${CMAKE_CURRENT_SOURCE_DIR}/..)
+	file(GLOB testnamelist "${CMAKE_CURRENT_SOURCE_DIR}/../src/*")
+	foreach (fulltestname ${testnamelist})
+		get_filename_component(testname ${fulltestname} NAME)
+		if (NOT "${testname}" STREQUAL "dpp")
+			message("-- Configuring test: ${Green}${testname}${ColourReset} with source: ${modules_dir}/${testname}/*.cpp")
+			set (testsrc "")
+			file(GLOB testsrc "${modules_dir}/${testname}/*.cpp")
+			add_executable(${testname} ${testsrc})
+			if (DPP_CORO)
+				target_compile_features(${testname} PRIVATE cxx_std_20)
+			else()
+				target_compile_features(${testname} PRIVATE cxx_std_17)
+			endif()
+			if (MSVC)
+				target_compile_options(${testname} PRIVATE /utf-8)
+			endif()
+			target_link_libraries(${testname} PUBLIC ${modname})
+		endif()
+	endforeach()
+	add_test(
+		NAME unittests
+		COMMAND library/unittest
+		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/library
+	)
 endif()
 	
 if(WIN32 AND NOT MINGW)

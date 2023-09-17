@@ -4,8 +4,7 @@
 
 [![Discord](https://img.shields.io/discord/825407338755653642?style=flat)](https://discord.gg/dpp) 
 ![Downloads](https://dl.dpp.dev/dlcount.php)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/39b054c38bba411d9b25b39524016c9e)](https://www.codacy.com/gh/brainboxdotcc/DPP/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=brainboxdotcc/DPP&amp;utm_campaign=Badge_Grade) 
-![Lines of code](https://img.shields.io/tokei/lines/github/brainboxdotcc/DPP) [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7726/badge)](https://bestpractices.coreinfrastructure.org/projects/7726) 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/39b054c38bba411d9b25b39524016c9e)](https://www.codacy.com/gh/brainboxdotcc/DPP/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=brainboxdotcc/DPP&amp;utm_campaign=Badge_Grade) [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7726/badge)](https://bestpractices.coreinfrastructure.org/projects/7726) 
 [![D++ CI](https://github.com/brainboxdotcc/DPP/actions/workflows/ci.yml/badge.svg)](https://github.com/brainboxdotcc/DPP/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/brainboxdotcc/DPP/badge)](https://securityscorecards.dev/viewer/?uri=github.com/brainboxdotcc/DPP)
 [![AUR version](https://img.shields.io/aur/version/dpp)](https://aur.archlinux.org/packages/dpp)
@@ -37,7 +36,7 @@ Want to help? Drop me a line or send a PR.
 
 This library is in use on [TriviaBot](https://triviabot.co.uk/) and [Sporks bot](https://sporks.gg) and many other bots!
 
-## Documentation
+## 📚 Documentation
 
 The documentation is constantly evolving and improving, generated from the code comments and markdown examples using Doxygen.
 
@@ -74,7 +73,7 @@ int main() {
 
 You can find more examples in our [example page](https://dpp.dev/md_docpages_03_example_programs.html).
 
-## Supported Systems
+## 💻 Supported Systems
 
 ### Linux
 The library runs ideally on **Linux**.
@@ -91,7 +90,7 @@ For running your bot on a **Raspberry Pi**, we offer a prebuilt .deb package for
 ### Other OS
 The library should work fine on other operating systems as well, and if you run a D++ bot on something not listed here, please let us know!
 
-## Getting Started
+## 🔰 Getting Started
 
 ### Installation
 
@@ -104,6 +103,10 @@ If you prefer to build the library from source, detailed instructions are availa
 ### FAQ
 
 For frequently asked questions and their answers, please visit our [FAQ page](https://dpp.dev/md_docpages_01_frequently_asked_questions.html).
+
+### Nightly Builds
+
+If you prefer to use Nightly Builds (This is only if you know what you are doing!) then you can use either our [master nightly builds](https://nightly.link/brainboxdotcc/DPP/workflows/ci/master) or our [dev nightly builds](https://nightly.link/brainboxdotcc/DPP/workflows/ci/dev).
 
 ## 🤝 Contributing
 
@@ -119,11 +122,11 @@ Make a humorous reference to brains in your nickname to get access to a secret b
 
 [![Discord](https://img.shields.io/discord/825407338755653642?style=flat)](https://discord.gg/dpp)
 
-## Show your support
+## 💕 Show your support
 
 We love people's support in growing and improving. Be sure to leave a ⭐️ if you like the project and also be sure to contribute, if you're interested!
 
-## Dependencies
+## 📂 Dependencies
 
 ### Build requirements
 * [cmake](https://cmake.org/) (version 3.13+)

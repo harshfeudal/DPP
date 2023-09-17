@@ -486,30 +486,37 @@ public:
 struct DPP_EXPORT command_resolved {
 	/**
 	 * @brief Resolved users
+	 * @see interaction::get_resolved_user
 	 */
 	std::map<dpp::snowflake, dpp::user> users;
 	/**
 	 * @brief Resolved guild members
+	 * @see interaction::get_resolved_member
 	 */
 	std::map<dpp::snowflake, dpp::guild_member> members;
 	/**
-	 * @brief Resolved total guild member permissions in the channel, including overwrites
+	 * @brief Resolved total guild member permissions including channel overwrites, permissions from roles and administrator privileges
+	 * @see interaction::get_resolved_permission
 	 */
 	std::map<dpp::snowflake, permission> member_permissions;
 	/**
 	 * @brief Resolved roles
+	 * @see interaction::get_resolved_role
 	 */
 	std::map<dpp::snowflake, dpp::role> roles;
 	/**
 	 * @brief Resolved channels
+	 * @see interaction::get_resolved_channel
 	 */
 	std::map<dpp::snowflake, dpp::channel> channels;
 	/**
 	 * @brief Resolved messages
+	 * @see interaction::get_resolved_message
 	 */
 	std::map<dpp::snowflake, dpp::message> messages;
 	/**
 	 * @brief Resolved attachments
+	 * @see interaction::get_resolved_attachment
 	 */
 	std::map<dpp::snowflake, dpp::attachment> attachments;
 };
@@ -797,7 +804,7 @@ public:
 	 * use the cache or require any extra API calls.
 	 * 
 	 * @param id User snowflake ID to find
-	 * @return const dpp::permission& permissions for the user including overrides on
+	 * @return const dpp::permission& total permissions for the user including overrides on
 	 * the channel where the command was issued.
 	 * @throws dpp::logic_exception on object not found in resolved set
 	 */
@@ -1077,6 +1084,15 @@ public:
 	 * @param _application_id Application id (usually the bot's user id)
 	 */
 	slashcommand(const std::string &_name, const std::string &_description, const dpp::snowflake _application_id);
+
+	/**
+	 * @brief Construct a new slashcommand object
+	 *
+	 * @param _name Command name
+	 * @param _type Context menu type
+	 * @param _application_id Application id (usually the bot's user id)
+	 */
+	slashcommand(const std::string &_name, const slashcommand_contextmenu_type _type, const dpp::snowflake _application_id);
 
 	/**
 	 * @brief Destroy the slashcommand object
